@@ -116,20 +116,34 @@ public class TableVisitor implements Visitor {
       return(null);
   }
   
-  //DOUNTIL TABLE VISITOR ADDED 
+  //DOUNTIL TABLE VISITOR ADDED implemented 11-19-2019
   public Object visitDoUntilCommand(DoUntilCommand ast, Object o)
   {
-      ast.cAST.visit(this, null);
-      ast.eAST.visit(this, null);
-      return null;
+    String name = "do until";
+    String type = "single-Command";
+    int size = (ast.entity!=null?ast.entity.size:0);
+    int level = 0;
+    int displacement = ast.position.finish-ast.position.start;
+    int value = 0;
+    addIdentifier(name,type,size,level,displacement,value);
+    ast.cAST.visit(this, null);
+    ast.eAST.visit(this, null);
+    return null;
   }
   
-  //DOWHILE TABLE VISITOR ADDED
+  //DOWHILE TABLE VISITOR ADDED implemented 11-19-2019
   public Object visitDoWhileCommand(DoWhileCommand ast, Object o)
   {
-      ast.cAST.visit(this, null);
-      ast.eAST.visit(this, null);
-      return null;
+    String name = "do while";
+    String type = "single-Command";
+    int size = (ast.entity!=null?ast.entity.size:0);
+    int level = 0;
+    int displacement = ast.position.finish-ast.position.start;
+    int value = 0;
+    addIdentifier(name,type,size,level,displacement,value);
+    ast.cAST.visit(this, null);
+    ast.eAST.visit(this, null);
+    return null;
   }
   
   public Object visitEmptyCommand(EmptyCommand ast, Object o) { 
@@ -167,19 +181,34 @@ public class TableVisitor implements Visitor {
       return(null);
   }
  
-  //UNTIL TABLE-VISITOR ADDED
+  //UNTIL TABLE-VISITOR ADDED implemented 11-19-2019
   public Object visitUntilCommand(UntilCommand ast, Object o) { 
-      ast.E.visit(this, null);
-      ast.C.visit(this, null);
+    String name = "do while";
+    String type = "single-Command";
+    int size = (ast.entity!=null?ast.entity.size:0);
+    int level = 0;
+    int displacement = ast.position.finish-ast.position.start;
+    int value = 0;
+    addIdentifier(name,type,size,level,displacement,value);
+    ast.E.visit(this, null);
+    ast.C.visit(this, null);
       
-      return(null);
+    return(null);
   }
   
+  // implemented 11-19-2019
   public Object visitWhileCommand(WhileCommand ast, Object o) { 
-      ast.E.visit(this, null);
-      ast.C.visit(this, null);
+    String name = "do while";
+    String type = "single-Command";
+    int size = (ast.entity!=null?ast.entity.size:0);
+    int level = 0;
+    int displacement = ast.position.finish-ast.position.start;
+    int value = 0;
+    addIdentifier(name,type,size,level,displacement,value);
+    ast.E.visit(this, null);
+    ast.C.visit(this, null);
       
-      return(null);
+    return(null);
   }
   // </editor-fold>
 
