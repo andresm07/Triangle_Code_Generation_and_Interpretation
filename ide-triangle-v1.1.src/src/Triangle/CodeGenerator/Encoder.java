@@ -117,15 +117,35 @@ public final class Encoder implements Visitor {
     return null;
   }
 
-  //DOUNTIL ENCODER ADDED, NOT IMPLEMENTED YET.
+  //DOUNTIL ENCODER ADDED, implemented 11-19-2019.
   public Object visitDoUntilCommand(DoUntilCommand ast, Object o)
   {
+    Frame frame = (Frame) o;
+    int jumpAddr, loopAddr;
+    
+    ast.eAST.visit(this, frame);
+    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, 0);
+    jumpAddr = nextInstrAddr;
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    loopAddr = nextInstrAddr;
+    ast.cAST.visit(this, frame);
+    patch(jumpAddr, nextInstrAddr);
     return null;
   }
   
-  //DOWHILE ENCODER ADDED, NOT IMPLEMENTED YET.
+  //DOWHILE ENCODER ADDED, implemented 11-19-2019.
   public Object visitDoWhileCommand(DoWhileCommand ast, Object o)
   {
+    Frame frame = (Frame) o;
+    int jumpAddr, loopAddr;
+    
+    ast.eAST.visit(this, frame);
+    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, 0);
+    jumpAddr = nextInstrAddr;
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    loopAddr = nextInstrAddr;
+    ast.cAST.visit(this, frame);
+    patch(jumpAddr, nextInstrAddr);
     return null;
   }
   
@@ -170,8 +190,18 @@ public final class Encoder implements Visitor {
     return null;
   }
   
-  //UNTIL CMD ENCODER ADDED, NOT IMPLEMENTED YET.
+  //UNTIL CMD ENCODER ADDED, implemented 11-19-2019.
   public Object visitUntilCommand(UntilCommand ast,Object o){
+    Frame frame = (Frame) o;
+    int jumpAddr, loopAddr;
+    
+    jumpAddr = nextInstrAddr;
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    loopAddr = nextInstrAddr;
+    ast.C.visit(this, frame);
+    patch(jumpAddr, nextInstrAddr);
+    ast.E.visit(this, frame);
+    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, 0);
     return null;
   }
 
