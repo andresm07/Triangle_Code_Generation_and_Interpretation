@@ -419,7 +419,7 @@ public final class Checker implements Visitor {
     return null;
   }
   
-  //VISITLOCALDECLARATIONNESTED ADDED ON 11/06/19 BY ANDRES.MIRANDAARIAS@GMAIL.COM
+  //VISITLOCALDECLARATIONNESTED 
   public Object visitLocalDeclarationNested(LocalDeclaration ast, Object o){
       ast.dcl1.visit(this, o);
       ast.dcl2.visit(this, o);
@@ -510,7 +510,7 @@ public final class Checker implements Visitor {
     return null;
   }
 
-  //VAR DECL. INIT CHECKER ADDED. on 10/14/19 by andres.mirandaarias@gmail.com
+  //VAR DECL. INIT CHECKER ADDED.
   public Object visitVarDeclarationInit(VarDeclarationInit ast, Object o){
     TypeDenoter eType = (TypeDenoter) ast.E.visit(this, null);
     idTable.enter(ast.I.spelling, ast);

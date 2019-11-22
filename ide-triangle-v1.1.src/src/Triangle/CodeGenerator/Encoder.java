@@ -369,7 +369,11 @@ public final class Encoder implements Visitor {
 
   //LOCAL DECL. ENCODER ADDED.
   public Object visitLocalDeclaration(LocalDeclaration ast, Object o){
-    return null;
+        Frame frame = (Frame) o;
+        int extraSize1 = ((Integer) ast.dcl1.visit(this, frame)).intValue();
+        int extraSize2 = ((Integer) ast.dcl2.visit(this, frame)).intValue();
+        int total = extraSize1+extraSize2;
+        return total;
   }
   
   public Object visitProcDeclaration(ProcDeclaration ast, Object o) {
@@ -431,9 +435,14 @@ public final class Encoder implements Visitor {
     return new Integer(extraSize);
   }
 
-  //VAR DECL. INIT ENCODER ADDED, NOT IMPLEMENTED YET.
+
+  //VAR DECL. INIT ENCODER ADDED
   public Object visitVarDeclarationInit(VarDeclarationInit ast, Object o){
-    return null;
+        Frame frame = (Frame) o;
+        int extraSize = (Integer) ast.E.visit(this, frame);
+        emit(Machine.PUSHop, 0, 0, extraSize);
+        ast.entity = new KnownAddress(Machine.addressSize, frame.level, frame.size);
+        return new Integer(extraSize);
   }
 
 
