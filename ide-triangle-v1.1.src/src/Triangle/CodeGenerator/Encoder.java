@@ -121,15 +121,12 @@ public final class Encoder implements Visitor {
   public Object visitDoUntilCommand(DoUntilCommand ast, Object o)
   {
     Frame frame = (Frame) o;
-    int jumpAddr, loopAddr;
-    
-    ast.eAST.visit(this, frame);
-    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, 0);
-    jumpAddr = nextInstrAddr;
-    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    int loopAddr;
+
     loopAddr = nextInstrAddr;
     ast.cAST.visit(this, frame);
-    patch(jumpAddr, nextInstrAddr);
+    ast.eAST.visit(this, frame);
+    emit(Machine.JUMPIFop, Machine.falseRep, Machine.CBr, loopAddr);
     return null;
   }
   
@@ -137,15 +134,12 @@ public final class Encoder implements Visitor {
   public Object visitDoWhileCommand(DoWhileCommand ast, Object o)
   {
     Frame frame = (Frame) o;
-    int jumpAddr, loopAddr;
-    
-    ast.eAST.visit(this, frame);
-    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, 0);
-    jumpAddr = nextInstrAddr;
-    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    int loopAddr;
+
     loopAddr = nextInstrAddr;
     ast.cAST.visit(this, frame);
-    patch(jumpAddr, nextInstrAddr);
+    ast.eAST.visit(this, frame);
+    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
     return null;
   }
   
@@ -201,7 +195,7 @@ public final class Encoder implements Visitor {
     ast.C.visit(this, frame);
     patch(jumpAddr, nextInstrAddr);
     ast.E.visit(this, frame);
-    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, 0);
+    emit(Machine.JUMPIFop, Machine.falseRep, Machine.CBr, loopAddr);
     return null;
   }
 
