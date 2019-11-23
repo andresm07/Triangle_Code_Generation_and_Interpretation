@@ -48,7 +48,7 @@ import Triangle.AbstractSyntaxTrees.EmptyCommand;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
-import Triangle.AbstractSyntaxTrees.ForDeclaration;
+import Triangle.AbstractSyntaxTrees.ForDeclaration; //FOR DECL ADDED.
 import Triangle.AbstractSyntaxTrees.ForDoCommand;//FOR CMD ADDED
 import Triangle.AbstractSyntaxTrees.FuncActualParameter;
 import Triangle.AbstractSyntaxTrees.FuncDeclaration;
@@ -147,10 +147,21 @@ public final class Encoder implements Visitor {
     return null;
   }
 
-  //FOR CMD ENCODER ADDED, NOT IMPLEMENTED YET.
+  //FOR CMD ENCODER ADDED, IMplemented 11-22-2019.
   public Object visitForDoCommand(ForDoCommand ast, Object o)
   {
-    return null;
+    Frame frame = (Frame) o;
+    int jumpAddr, loopAddr;
+    
+    ast.E.visit(this, o);
+    Integer valSize=(Integer) ast.D.visit(this,o);
+    jumpAddr=nextInstrAddr;
+    emit(Machine.JUMPIFop,Machine.trueRep,Machine.CBr,jumpAddr);
+    loopAddr=nextInstrAddr;
+    ast.C.visit(this, frame);
+    patch(jumpAddr,nextInstrAddr);
+    emit(Machine.POPop,0,0,2);
+    return null; 
   }
   
   public Object visitIfCommand(IfCommand ast, Object o) {
@@ -335,9 +346,10 @@ public final class Encoder implements Visitor {
     return new Integer(extraSize);
   }
 
-  //added forDecl
+  //FOR DECLARATION ENCODER ADDED, IMPLEMENTED 11/22/2019.
   public Object visitForDeclaration(ForDeclaration ast, Object o){
-      return null;
+    ast.E.visit(this, o);
+    return null;
   }
   
   public Object visitFuncDeclaration(FuncDeclaration ast, Object o) {
