@@ -165,12 +165,12 @@ public final class Checker implements Visitor {
 
   //FOR CMD CHECKER ADDED.
   public Object visitForDoCommand(ForDoCommand ast, Object o){
-    TypeDenoter eType = (TypeDenoter) ast.E.visit(this,null);
+    idTable.openScope();
+    ast.D.visit(this, null);
+      TypeDenoter eType = (TypeDenoter) ast.E.visit(this,null);
     if(!(eType instanceof IntTypeDenoter)){
         reporter.reportError("Wrong expression type. Integer type expected", "", ast.E.position);
     }
-    idTable.openScope();
-    ast.D.visit(this, null);
     ast.C.visit(this, null);
     idTable.closeScope();
     return null;

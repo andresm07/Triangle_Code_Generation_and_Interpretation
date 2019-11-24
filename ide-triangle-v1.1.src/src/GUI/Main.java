@@ -630,9 +630,8 @@ public class Main extends javax.swing.JFrame {
                 Writer treeWriterXML = new Writer(desktopPane.getSelectedFrame().getTitle().replace(".tri", ".xml"));
                 treeWriterXML.write(compiler.getAST());
                 
-                
-                runMenuItem.setEnabled(false);
-                buttonRun.setEnabled(false);
+                runMenuItem.setEnabled(true);//changed.
+                buttonRun.setEnabled(true);//changed.
             } else {
                 ((FileFrame)desktopPane.getSelectedFrame()).highlightError(compiler.getErrorPosition());
                 runMenuItem.setEnabled(false);

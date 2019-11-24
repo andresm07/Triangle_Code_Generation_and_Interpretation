@@ -151,16 +151,21 @@ public final class Encoder implements Visitor {
   public Object visitForDoCommand(ForDoCommand ast, Object o)
   {
     Frame frame = (Frame) o;
-    int jumpAddr, loopAddr;
+    int expressionSize,loopRepeat,loopCond;
+    expressionSize = (Integer)ast.E.visit(this, frame);
     
-    ast.E.visit(this, o);
-    Integer valSize=(Integer) ast.D.visit(this,o);
-    jumpAddr=nextInstrAddr;
-    emit(Machine.JUMPIFop,Machine.trueRep,Machine.CBr,jumpAddr);
-    loopAddr=nextInstrAddr;
+    ast.D.visit(this, new Frame(frame.level, frame.size + expressionSize));
+    loopCond = nextInstrAddr;
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    loopRepeat = nextInstrAddr;
     ast.C.visit(this, frame);
-    patch(jumpAddr,nextInstrAddr);
-    emit(Machine.POPop,0,0,2);
+    emit(Machine.CALLop, frame.level, Machine.PBr, Machine.succDisplacement);
+    patch(loopCond, nextInstrAddr);
+    emit(Machine.LOADop,2, Machine.STr,-2);
+    emit(Machine.CALLop, frame.level, Machine.PBr, Machine.geDisplacement);
+    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopRepeat);
+    emit(Machine.POPop, 0, 0, 2);
+    
     return null; 
   }
   
