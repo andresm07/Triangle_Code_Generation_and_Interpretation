@@ -1,0 +1,7 @@
+let
+  var d : Boolean
+in
+  loop for i ~ d to 10 do ! d debe ser entera
+    putint (d)
+  repeat
+end

@@ -1,0 +1,4 @@
+loop for a ~ 1 to 10 do
+   put (a) !debe dar error, a no es char
+repeat
+

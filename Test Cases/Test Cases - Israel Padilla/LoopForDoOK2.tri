@@ -1,0 +1,9 @@
+let
+  var k : Integer
+in
+  k := 1;
+  loop for i ~ k to 10 do 
+    putint (1); ! debe imprimir 10 unos
+    k:=k+1
+  repeat
+end

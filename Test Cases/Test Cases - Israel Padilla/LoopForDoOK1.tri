@@ -1,0 +1,10 @@
+let
+  var k : Integer;
+  const b ~ 10
+in
+  k := 1;
+  loop for i ~ k to b do
+    putint (k); ! debe imprimir 1,2,3...10
+    k:=k+1
+  repeat
+end

@@ -1,0 +1,8 @@
+let
+  var j : Boolean
+in
+  loop for i ~ 1 to j do ! j debería ser entera
+    j := j + 1 ; 
+    putint (1) ! debe imprimir 10 unos
+  repeat
+end

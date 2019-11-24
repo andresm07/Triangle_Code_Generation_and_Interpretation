@@ -1,0 +1,9 @@
+let
+  var k : Integer;
+  const b ~ 20
+in
+  k := 10;
+  loop for i ~ k to b do
+    putint (b) ! imprimir diez 20
+  repeat
+end
