@@ -629,10 +629,9 @@ public class Main extends javax.swing.JFrame {
                 //create the XML file of the AST
                 Writer treeWriterXML = new Writer(desktopPane.getSelectedFrame().getTitle().replace(".tri", ".xml"));
                 treeWriterXML.write(compiler.getAST());
-                
-                
-                runMenuItem.setEnabled(false);
-                buttonRun.setEnabled(false);
+
+                runMenuItem.setEnabled(true);//Changed.
+                buttonRun.setEnabled(true);//Changed.
             } else {
                 ((FileFrame)desktopPane.getSelectedFrame()).highlightError(compiler.getErrorPosition());
                 runMenuItem.setEnabled(false);
