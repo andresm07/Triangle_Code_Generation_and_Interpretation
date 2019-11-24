@@ -1,0 +1,14 @@
+let
+  const b ~ 5;
+  var a init 10
+in
+  loop
+  while a > b do
+
+    putint (a) ; ! debe imprimir 10, 9, 8, 7, 6
+    a := a - 1
+
+  repeat
+
+end
+
