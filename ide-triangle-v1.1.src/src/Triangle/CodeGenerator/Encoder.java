@@ -428,7 +428,7 @@ public final class Encoder implements Visitor {
         visitingRecursive = false;
         visitRecursiveDeclarationNested();
     }
-    return extraSize1 + extraSize2;
+    return new Integer(extraSize1 + extraSize2);
   }
   
   //RECURSIVE DECL. NESTED ENCODER ADDED
@@ -436,9 +436,9 @@ public final class Encoder implements Visitor {
       int astIndex = 0;
       for(Object element : astList){
           if(element instanceof Identifier){
-              Identifier ast = (Identifier) element;
-              if(ast.decl.entity instanceof KnownRoutine){
-                  ObjectAddress address = ((KnownRoutine) ast.decl.entity).address;
+              Identifier iAST = (Identifier) element;
+              if(iAST.decl.entity instanceof KnownRoutine){
+                  ObjectAddress address = ((KnownRoutine) iAST.decl.entity).address;
                   int callAddress = addrList.get(astIndex);
                   int frameLevel = frameList.get(astIndex);
                   patch(callAddress, address.displacement, displayRegister(frameLevel, address.level));
@@ -448,9 +448,9 @@ public final class Encoder implements Visitor {
               }
           }
           else if(element instanceof Operator){
-              Operator ast = (Operator) element;
-              if(ast.decl.entity instanceof KnownRoutine){
-                  ObjectAddress address = ((KnownRoutine) ast.decl.entity).address;
+              Operator oAST = (Operator) element;
+              if(oAST.decl.entity instanceof KnownRoutine){
+                  ObjectAddress address = ((KnownRoutine) oAST.decl.entity).address;
                   int callAddress = addrList.get(astIndex);
                   int frameLevel = frameList.get(astIndex);
                   patch(callAddress, address.displacement, displayRegister(frameLevel, address.level));
@@ -460,9 +460,9 @@ public final class Encoder implements Visitor {
               }
           }
           else if(element instanceof ProcActualParameter){
-              ProcActualParameter ast = (ProcActualParameter) element;
-              if(ast.I.decl.entity instanceof KnownRoutine){
-                  ObjectAddress address = ((KnownRoutine) ast.I.decl.entity).address;
+              ProcActualParameter pAST = (ProcActualParameter) element;
+              if(pAST.I.decl.entity instanceof KnownRoutine){
+                  ObjectAddress address = ((KnownRoutine) pAST.I.decl.entity).address;
                   int loadAddress = addrList.get(astIndex);
                   int frameLevel = frameList.get(astIndex);
                   patch(loadAddress, 0, displayRegister(frameLevel, address.level));
@@ -473,9 +473,9 @@ public final class Encoder implements Visitor {
               }
           }
           else{
-              FuncActualParameter ast = (FuncActualParameter) element;
-              if(ast.I.decl.entity instanceof KnownRoutine){
-                  ObjectAddress address = ((KnownRoutine) ast.I.decl.entity).address;
+              FuncActualParameter fAST = (FuncActualParameter) element;
+              if(fAST.I.decl.entity instanceof KnownRoutine){
+                  ObjectAddress address = ((KnownRoutine) fAST.I.decl.entity).address;
                   int loadAddress = addrList.get(astIndex);
                   int frameLevel = frameList.get(astIndex);
                   patch(loadAddress, 0, displayRegister(frameLevel, address.level));
@@ -813,8 +813,15 @@ public final class Encoder implements Visitor {
     Frame frame = (Frame) o;
     if (ast.decl.entity instanceof KnownRoutine) {
       ObjectAddress address = ((KnownRoutine) ast.decl.entity).address;
-      emit(Machine.CALLop, displayRegister(frame.level, address.level),
-	   Machine.CBr, address.displacement);
+      emit(Machine.CALLop, displayRegister(frame.level, address.level), Machine.CBr, address.displacement);
+      /*if(visitingRecursive && astList.contains(ast)){
+          int astIndex = astList.indexOf(ast);
+          int callAddress = addrList.get(astIndex);
+          patch(callAddress, address.displacement, displayRegister(frame.level, address.level));
+      }
+      else{
+          emit(Machine.CALLop, displayRegister(frame.level, address.level), Machine.CBr, address.displacement);
+      }*/
     } else if (ast.decl.entity instanceof UnknownRoutine) {
       ObjectAddress address = ((UnknownRoutine) ast.decl.entity).address;
       emit(Machine.LOADop, Machine.closureSize, displayRegister(frame.level,
