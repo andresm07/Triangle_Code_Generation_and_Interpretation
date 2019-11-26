@@ -97,9 +97,14 @@ import Triangle.AbstractSyntaxTrees.Visitor;
 import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 import Triangle.AbstractSyntaxTrees.WhileCommand;
+import java.util.ArrayList;
 
 public final class Encoder implements Visitor {
-
+  ArrayList<Object> astList = new ArrayList<>();
+  ArrayList<Integer> addrList = new ArrayList<>();
+  ArrayList<Integer> frameList = new ArrayList<>();
+  boolean visitingRecursive = false;
+  int nestedLevel = 0;
 
   // Commands
   public Object visitAssignCommand(AssignCommand ast, Object o) {
@@ -409,9 +414,82 @@ public final class Encoder implements Visitor {
     return new Integer(0);
   }
 
-  //RECURSIVE DECL. ENCODER ADDED, NOT IMPLEMENTED YET.
+  //RECURSIVE DECL. ENCODER ADDED
   public Object visitRecursiveDeclaration(RecursiveDeclaration ast, Object o){
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    Frame frame = (Frame) o;
+    int extraSize1, extraSize2;
+    visitingRecursive = true;
+    nestedLevel++;
+    extraSize1 = ((Integer) ast.procFunc1.visit(this, frame));
+    Frame frame1 = new Frame(frame, extraSize1);
+    extraSize2 = ((Integer) ast.procFunc2.visit(this, frame1));
+    nestedLevel--;
+    if(nestedLevel == 0){
+        visitingRecursive = false;
+        visitRecursiveDeclarationNested();
+    }
+    return extraSize1 + extraSize2;
+  }
+  
+  //RECURSIVE DECL. NESTED ENCODER ADDED
+  public void visitRecursiveDeclarationNested(){
+      int astIndex = 0;
+      for(Object element : astList){
+          if(element instanceof Identifier){
+              Identifier ast = (Identifier) element;
+              if(ast.decl.entity instanceof KnownRoutine){
+                  ObjectAddress address = ((KnownRoutine) ast.decl.entity).address;
+                  int callAddress = addrList.get(astIndex);
+                  int frameLevel = frameList.get(astIndex);
+                  patch(callAddress, address.displacement, displayRegister(frameLevel, address.level));
+              }
+              else{
+                  
+              }
+          }
+          else if(element instanceof Operator){
+              Operator ast = (Operator) element;
+              if(ast.decl.entity instanceof KnownRoutine){
+                  ObjectAddress address = ((KnownRoutine) ast.decl.entity).address;
+                  int callAddress = addrList.get(astIndex);
+                  int frameLevel = frameList.get(astIndex);
+                  patch(callAddress, address.displacement, displayRegister(frameLevel, address.level));
+              }
+              else{
+                  
+              }
+          }
+          else if(element instanceof ProcActualParameter){
+              ProcActualParameter ast = (ProcActualParameter) element;
+              if(ast.I.decl.entity instanceof KnownRoutine){
+                  ObjectAddress address = ((KnownRoutine) ast.I.decl.entity).address;
+                  int loadAddress = addrList.get(astIndex);
+                  int frameLevel = frameList.get(astIndex);
+                  patch(loadAddress, 0, displayRegister(frameLevel, address.level));
+                  patch(loadAddress + 1, address.displacement);
+              }
+              else{
+                  
+              }
+          }
+          else{
+              FuncActualParameter ast = (FuncActualParameter) element;
+              if(ast.I.decl.entity instanceof KnownRoutine){
+                  ObjectAddress address = ((KnownRoutine) ast.I.decl.entity).address;
+                  int loadAddress = addrList.get(astIndex);
+                  int frameLevel = frameList.get(astIndex);
+                  patch(loadAddress, 0, displayRegister(frameLevel, address.level));
+                  patch(loadAddress + 1, address.displacement);
+              }
+              else{
+                  
+              }
+          }
+          astIndex++;
+      }
+      astList.clear();
+      addrList.clear();
+      frameList.clear();
   }
   
   public Object visitSequentialDeclaration(SequentialDeclaration ast, Object o) {
@@ -567,6 +645,14 @@ public final class Encoder implements Visitor {
       emit(Machine.LOADAop, 0, Machine.SBr, 0);
       emit(Machine.LOADAop, 0, Machine.PBr, displacement);
     }
+    else if(visitingRecursive){
+        astList.add(ast);
+        addrList.add(nextInstrAddr);
+        frameList.add(frame.level);
+        // static link, code address
+        emit(Machine.LOADAop, 0, 0, 0);
+        emit(Machine.LOADAop, 0, Machine.CBr, 0);
+    }
     return new Integer(Machine.closureSize);
   }
 
@@ -586,6 +672,14 @@ public final class Encoder implements Visitor {
       // static link, code address
       emit(Machine.LOADAop, 0, Machine.SBr, 0);
       emit(Machine.LOADAop, 0, Machine.PBr, displacement);
+    }
+    else if (visitingRecursive){
+        astList.add(ast);
+        addrList.add(nextInstrAddr);
+        frameList.add(frame.level);
+        // static link, code address
+        emit(Machine.LOADAop, 0, 0, 0);
+        emit(Machine.LOADAop, 0, Machine.CBr, 0);
     }
     return new Integer(Machine.closureSize);
   }
@@ -734,6 +828,12 @@ public final class Encoder implements Visitor {
       int displacement = ((EqualityRoutine) ast.decl.entity).displacement;
       emit(Machine.LOADLop, 0, 0, frame.size / 2);
       emit(Machine.CALLop, Machine.SBr, Machine.PBr, displacement);
+      // OPTION ADDED FOR VISITRECURSIVEDECLARATION
+    } else if(visitingRecursive){
+        astList.add(ast); //ADD AST TO LIST
+        addrList.add(nextInstrAddr); //SAVE ADDRESS
+        frameList.add(frame.level); //SAVE ACTUAL FRAME
+        emit(Machine.CALLop, 0, Machine.CBr, 0); //WRITE INSTRUCTION
     }
     return null;
   }
@@ -761,6 +861,12 @@ public final class Encoder implements Visitor {
       int displacement = ((EqualityRoutine) ast.decl.entity).displacement;
       emit(Machine.LOADLop, 0, 0, frame.size / 2);
       emit(Machine.CALLop, Machine.SBr, Machine.PBr, displacement);
+      //OPTION ADDED FOR VISITRECURSIVEDECLARATION
+    } else if(visitingRecursive){
+        astList.add(ast);
+        addrList.add(nextInstrAddr);
+        frameList.add(frame.level);
+        emit(Machine.CALLop, 0, Machine.CBr, 0);
     }
     return null;
   }
@@ -957,6 +1063,11 @@ public final class Encoder implements Visitor {
   private void patch (int addr, int d) {
     Machine.code[addr].d = d;
   }
+  
+  private void patch(int addr, int d, int n) {
+        Machine.code[addr].d = d;
+        Machine.code[addr].n = n;
+    }
 
   // DATA REPRESENTATION
 

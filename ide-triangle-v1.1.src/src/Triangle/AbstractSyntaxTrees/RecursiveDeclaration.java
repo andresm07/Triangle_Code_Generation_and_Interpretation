@@ -20,15 +20,17 @@
  
  public class RecursiveDeclaration extends Declaration {
  
-   public RecursiveDeclaration (Declaration procFuncAST,SourcePosition thePosition) {
+   public RecursiveDeclaration (Declaration decl1, Declaration decl2, SourcePosition thePosition) {
      super (thePosition);
-     this.procFuncAST = procFuncAST;
+     this.procFunc1 = decl1;
+     this.procFunc2 = decl2;
    }
  
    public Object visit(Visitor v, Object o) {
      return v.visitRecursiveDeclaration(this, o);
    }
  
-   public Declaration procFuncAST;
+   public Declaration procFunc1;
+   public Declaration procFunc2;
  }
  

@@ -222,7 +222,7 @@ public class TreeVisitor implements Visitor {
     
     //RECURSIVE DECLARATION TREE VISITOR ADDED.
     public Object visitRecursiveDeclaration(RecursiveDeclaration ast, Object obj){
-        return(createUnary("Recursive Declaration", ast.procFuncAST));
+        return(createBinary("Recursive Declaration", ast.procFunc1, ast.procFunc2));
     }
     
     public Object visitSequentialDeclaration(SequentialDeclaration ast, Object obj) {

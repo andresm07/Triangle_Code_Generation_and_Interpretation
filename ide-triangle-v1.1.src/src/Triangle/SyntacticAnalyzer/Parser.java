@@ -709,10 +709,20 @@ Declaration parseDeclaration() throws SyntaxError {
       case Token.RECURSIVE:
       {
         acceptIt();
-        declarationAST = parseProcFuncs();
+        Declaration dAST = parseProcFunc();
+        accept(Token.AND);
+        Declaration d2AST = parseProcFunc();
+        finish(declarationPos);
+        dAST = new RecursiveDeclaration(dAST, d2AST, declarationPos);
+        while(currentToken.kind == Token.AND){
+            acceptIt();
+            d2AST = parseProcFunc();
+            finish(declarationPos);
+            dAST = new RecursiveDeclaration(dAST, d2AST, declarationPos);
+        }
         accept(Token.END);
         finish(declarationPos);
-        declarationAST = new RecursiveDeclaration(declarationAST, declarationPos);
+        declarationAST = dAST;
       }
       break;
       //LOCAL CASE

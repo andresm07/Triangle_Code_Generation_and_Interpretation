@@ -357,7 +357,8 @@ public class TableVisitor implements Visitor {
   
   //RECURSIVE DEC. TABLE VISITOR ADDED.
   public Object visitRecursiveDeclaration(RecursiveDeclaration ast, Object o){
-      ast.procFuncAST.visit(this,null);
+      ast.procFunc1.visit(this,null);
+      ast.procFunc2.visit(this,null);
       return(null);
   }
   

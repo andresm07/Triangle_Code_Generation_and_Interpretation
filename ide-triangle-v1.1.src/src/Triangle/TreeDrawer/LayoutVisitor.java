@@ -225,7 +225,7 @@ public class LayoutVisitor implements Visitor {
 
   //RECURSIVE DECL. LAYOYT VISITOR.
   public Object visitRecursiveDeclaration(RecursiveDeclaration ast, Object obj){
-    return layoutUnary("Rec. Decl.", ast.procFuncAST);
+    return layoutBinary("Rec. Decl.", ast.procFunc1, ast.procFunc2);
   }
   
   public Object visitSequentialDeclaration(SequentialDeclaration ast, Object obj) {

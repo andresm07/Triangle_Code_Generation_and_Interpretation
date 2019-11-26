@@ -646,7 +646,8 @@ public class WriterVisitor implements Visitor {
     @Override
     public Object visitRecursiveDeclaration(RecursiveDeclaration ast, Object o) {
         writeLineXML("<RecursiveDeclaration>");
-        ast.procFuncAST.visit(this, null);
+        ast.procFunc1.visit(this, null);
+        ast.procFunc2.visit(this, null);
         writeLineXML("</RecursiveDeclaration>");
         return null;
     }

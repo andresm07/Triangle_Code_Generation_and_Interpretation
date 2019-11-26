@@ -5,5 +5,5 @@ let
     const b ~ a + 1
   end
 in
-  putint(b)
+  put(a)
 end

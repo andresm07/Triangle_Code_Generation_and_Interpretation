@@ -450,7 +450,8 @@ public final class Checker implements Visitor {
     //PENDIENTE MODIFICACION
     visitRecursive = true;
     nestedLevel++;
-    ast.procFuncAST.visit(this, null);
+    ast.procFunc1.visit(this, null);
+    ast.procFunc2.visit(this, null);
     nestedLevel--;
     if(nestedLevel == 0){
         visitRecursive = false;
